@@ -3,11 +3,9 @@ import jsonlines
 import datasets
 from datasets import load_dataset
 from pprint import pprint
-
-
-
-from pprint import pprint
 from transformers import AutoTokenizer
+from pprint import pprint
+
 
 def tokenize_function(examples):
     if "question" in examples and "answer" in examples:
