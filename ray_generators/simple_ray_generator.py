@@ -11,12 +11,13 @@ The Ray generator is useful when:
 """
 
 @ray.remote
-def generative_task() -> object:
+def generative_task(debug=True) -> object:
     """"
     A task that generates a random numpy array 
     matrix of N between 0 and 100. 0 is a signal to stop
     """
-    print(f"task id: {ray.get_runtime_context().get_task_id()}")
+    if debug:
+        print(f"task id: {ray.get_runtime_context().get_task_id()}")
 
     time.sleep(0.005)
     dim = random.randint(0, 100)
@@ -29,7 +30,7 @@ def process_numbers(numbers: list[object]) -> int:
     """
     A task that processes a list of np arrays
     """
-    sums = [np.sum(arr) for arr in numbers]
+    sums = [(np.sum(arr) * (i+1)) for i, arr in enumerate(numbers)]
     return sum(sums)
 
 if __name__ == "__main__":
@@ -41,7 +42,7 @@ if __name__ == "__main__":
     np_arrays = []
     # Generate a list of nummp
     while True:
-        gen = generative_task.remote()
+        gen = generative_task.remote(debug=False)
         # fet the array from the generator
         arr = ray.get(next(gen))
         if np.all(arr == 0):
