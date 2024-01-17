@@ -20,9 +20,11 @@ if __name__ == "__main__":
         images = ray.get(batch)
         print(f"Batch no: {idx}; images/batch:{len(images)}\n")
         print(f"batch={images}\n")
+
+        # download and transform the images
         results = download_batch_images.remote(images, './data_images')
         transformed_images = [transform_image(image) for image in ray.get(results)]
-        print(f"transformed_images={transformed_images}\n")
+        print(f"transformed_images[0]={transformed_images[0]}\n")
     ray.shutdown()  
 
 
