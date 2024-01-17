@@ -19,12 +19,13 @@ if __name__ == "__main__":
     for idx, batch in enumerate(batch_gen):
         images = ray.get(batch)
         print(f"Batch no: {idx}; images/batch:{len(images)}\n")
-        print(f"batch={images}\n")
+        print(f"Batch no {idx}'s first image is {images[0]}\n")
 
         # download and transform the images
         results = download_batch_images.remote(images, './data_images')
         transformed_images = [transform_image(image) for image in ray.get(results)]
         print(f"transformed_images[0]={transformed_images[0]}\n")
+        print("---" * 10)
     ray.shutdown()  
 
 
