@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 from torchvision import transforms as T
 import torchvision.transforms.functional as TF
 import ray
-#
+from PIL import Image
+
 # borrowed URLs ideas and heavily modified from https://analyticsindiamag.com/how-to-run-python-code-concurrently-using-multithreading/
 #
 
@@ -220,6 +221,24 @@ def transform_image(img_ref:object, fetch_image=True, verbose=False):
     return before_shape, after_shape
 
 @ray.remote
+def image_to_vector(image_path:str) -> np.array:
+    """
+    Given an image path, convert the image to a vector
+    """
+    # Open the image file
+    img = Image.open(image_path)
+    # Convert the image to grayscale
+    img = img.convert('L')
+    # Resize image if it is too large
+    img = img.resize((100, 100))  # example size, can be changed as needed
+    # Convert image to numpy array
+    img_array = np.array(img)
+    # Flatten the array to convert it to a vector
+    img_vector = img_array.flatten()
+    return img_vector
+
+
+@ray.remote
 def generate_batch_of_images(urls: List[str], batch_size:int =10) -> List[str]:
     """
     Given a list of URLs, generate a batch of images of size batch_size
@@ -251,8 +270,15 @@ if __name__ == "__main__":
     for idx, batch in enumerate(batch_gen):
         images = ray.get(batch)
         print(f"Batch no: {idx}; images/batch:{len(images)}\n")
-        print(f"batch={images}\n")
-        results = download_batch_images.remote(images, './data_images')
-        print(f"returned results={ray.get(results)}\n")
+        print(f"Batch no {idx}'s first image is {images[0]}\n")
 
+        # download and transform the images
+        results = download_batch_images.remote(images, './data_images')
+        print(f"First image in the Ray object store is {ray.get(ray.get(results)[0])}\n")
+
+        # convert batch of images to vectors
+        image_paths = [f"{data_dir}/{image.split('/')[4]}.jpg" for image in images]
+        image_vectors = [image_to_vector.remote(image) for image in image_paths]
+        print(f"Converted to image_vectors[0]={ray.get(image_vectors[0])}\n")
+        print("---" * 10)
     ray.shutdown()      
