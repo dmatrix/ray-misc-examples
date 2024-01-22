@@ -2,8 +2,10 @@ import sqlite3
 import os
 
 #
-# Source for this code & data: https://github.com/shantnu/Open-Gigabyte-File-Python
-#
+# Source for this code & data: 
+# https://download.cms.gov/nppes/NPI_Files.html 
+# https://download.cms.gov/nppes/NPI_Files.html#_ga=2.153787784.2133647849.1631298971-2037632540.1631298971
+# https://download.cms.gov/nppes/NPI_Files.html?agree=yes&next=Accept
 
 from utils import NPI_FILE_CSV, NPI_DB
 

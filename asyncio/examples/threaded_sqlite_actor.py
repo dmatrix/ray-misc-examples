@@ -14,10 +14,10 @@ class ThreadedSQLiteActor:
 
     def run_tasks(self, q, verbose=True):
         if verbose:
-            print(f"Started task-id='{q}'")
+            print(f"Started task-id='{ray.get_runtime_context().get_task_id()}'")
         result = self.do_query(q)
         if verbose:
-            print(f"finished task=i='{q}'")
+            print(f"finished task=i='{ray.get_runtime_context().get_task_id()}' with result='{result}'")
         return result
 
     def do_query(self, q):
