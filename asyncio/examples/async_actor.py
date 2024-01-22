@@ -12,7 +12,7 @@ MAX_RANDOM = MAX_CONCURRENCY * 2
 @ray.remote
 class AsyncActor:
 
-   async def run_tasks(self, i, type, verbose=True):
+   async def run_tasks(self, i, type, verbose=False):
         if verbose:
             print(f"run:{i} {type}-started task-id='{ray.get_runtime_context().get_task_id()}'")
         # simulate some heavy duty work
